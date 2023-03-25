@@ -1,8 +1,8 @@
 package com.task.enums;
 
 public enum CallCode {
-    IN("02"),
-    OUT("01");
+    CALL_IN("02"),
+    CALL_OUT("01");
     private final String code;
     CallCode(String code){
         this.code = code;

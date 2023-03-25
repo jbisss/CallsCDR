@@ -8,4 +8,13 @@ public class Call {
     private String endTime;
     private String duration;
     private double cost;
+    private void countDuration(String startTime, String endTime){
+
+    }
+    public Call(CallCode callCode, String startTime, String endTime){
+        this.callCode = callCode;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        countDuration(startTime, endTime);
+    }
 }

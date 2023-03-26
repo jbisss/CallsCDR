@@ -14,7 +14,6 @@ public class Generator {
      * @throws IOException for line reading from file
      */
     private void parseFile(BufferedReader reader) throws IOException {
-        long startTime = System.nanoTime();
         String line = reader.readLine();
         while (line != null) {
             line = line.replaceAll(" ", "");
@@ -31,21 +30,17 @@ public class Generator {
         for (String key : Subscriber.subscribers.keySet()) {
             Subscriber.subscribers.get(key).countCallsCost();
         }
-        double elapsedTime = (System.nanoTime() - startTime) / 1e6;
-        System.out.println(elapsedTime + " ms");
     }
 
     /**
      * Creates .txt files with reports about all phone numbers
-     *
-     * @param path to folder with reports
      */
-    private void createReports(String path) {
+    private void createReports() {
         for (String key : Subscriber.subscribers.keySet()) {
             File file = null;
             try {
                 String fileName = Subscriber.subscribers.get(key).getNumber() + ".txt";
-                file = new File(path + fileName);
+                file = new File(".\\reports\\" + fileName);
                 if (file.createNewFile()) {
                     System.out.println("File created!");
                 } else {
@@ -73,7 +68,7 @@ public class Generator {
     public void execute(String fileName) {
         try (FileReader fr = new FileReader(fileName); BufferedReader reader = new BufferedReader(fr)) {
             parseFile(reader);
-            createReports("D:\\JavaProjects\\CallsCDR\\reports\\");
+            createReports();
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

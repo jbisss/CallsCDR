@@ -35,13 +35,17 @@ public class Generator {
         System.out.println(elapsedTime + " ms");
     }
 
-    public void createReports() {
+    /**
+     * Creates .txt files with reports about all phone numbers
+     *
+     * @param path to folder with reports
+     */
+    private void createReports(String path) {
         for (String key : Subscriber.subscribers.keySet()) {
             File file = null;
             try {
                 String fileName = Subscriber.subscribers.get(key).getNumber() + ".txt";
-                String path = "D:\\JavaProjects\\CallsCDR\\src\\main\\reports\\" + fileName;
-                file = new File(path);
+                file = new File(path + fileName);
                 if (file.createNewFile()) {
                     System.out.println("File created!");
                 } else {
@@ -69,7 +73,7 @@ public class Generator {
     public void execute(String fileName) {
         try (FileReader fr = new FileReader(fileName); BufferedReader reader = new BufferedReader(fr)) {
             parseFile(reader);
-            createReports();
+            createReports("D:\\JavaProjects\\CallsCDR\\reports\\");
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

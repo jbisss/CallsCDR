@@ -3,7 +3,6 @@ package com.task.classes;
 import com.task.enums.CallCode;
 import com.task.enums.Tariff;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,20 +25,30 @@ public class Subscriber {
         }
     }
 
+    /**
+     * Adds a new call to calls list of subscriber
+     *
+     * @param code      code of call
+     * @param startTime start time of call
+     * @param endTime   end time of call
+     */
     public void addCall(String code, String startTime, String endTime) {
         calls.add(new Call(CallCode.getCallCodeByCode(code), startTime, endTime));
     }
 
+    /**
+     * Counts a cost of each call
+     */
     public void countCallsCost() {
         List<Call> sortedCalls = calls.stream()
                 .sorted(Comparator.comparing(Call::getStartTime))
                 .collect(Collectors.toList());
         long totalDuration = 0;
         int minutesTotal = 0;
-        int minutesCall = 0;
+        int minutesCall;
         double price = 0;
         for (Call call : sortedCalls) {
-            minutesCall = (int) (call.getDurationDecimal() / 60);
+            minutesCall = (int) (call.getDurationNumber() / 60);
             if (tariff == Tariff.DEFAULT) {
                 if (call.getCallCode() == CallCode.CALL_OUT) {
                     if (minutesTotal > 100) {
@@ -65,19 +74,29 @@ public class Subscriber {
                 price = minutesCall * 1.5d;
                 call.setCost(price);
             }
-            totalDuration += call.getDurationDecimal();
+            totalDuration += call.getDurationNumber();
             minutesTotal = (int) (totalDuration / 60);
             this.totalCost += price;
             price = 0;
         }
     }
 
+    /**
+     * @return String representation of number
+     */
     public String getNumber() {
         return number;
     }
-    public String buildCallString(List<Call> calls){
+
+    /**
+     * Represents an information about calls in String format
+     *
+     * @param calls list of calls
+     * @return String representation of calls
+     */
+    public String buildCallString(List<Call> calls) {
         StringBuilder stringBuilder = new StringBuilder();
-        for(Call call : calls){
+        for (Call call : calls) {
             stringBuilder.append("|     ");
             stringBuilder.append(call.getCallCode().getCode());
             stringBuilder.append("    | ");
@@ -95,8 +114,14 @@ public class Subscriber {
         }
         return stringBuilder.toString();
     }
+
+    /**
+     * Build a String representation of table where all information about phone number is represented
+     *
+     * @return String representation of information about subscriber
+     */
     @Override
-    public String toString(){
+    public String toString() {
         String line = "-----------------------------------------------------------------------------\n";
         StringBuilder resultBuilder = new StringBuilder();
         resultBuilder.append("Tariff index: ");

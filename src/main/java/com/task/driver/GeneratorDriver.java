@@ -6,5 +6,6 @@ public class GeneratorDriver {
     public static void main(String[] args) {
         Generator generator = new Generator();
         generator.execute("cdr.txt");
+        System.out.println();
     }
 }

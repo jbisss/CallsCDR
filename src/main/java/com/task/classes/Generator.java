@@ -2,9 +2,7 @@ package com.task.classes;
 
 import com.task.enums.Tariff;
 
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 
 public class Generator {
     /**
@@ -18,10 +16,10 @@ public class Generator {
     private void parseFile(BufferedReader reader) throws IOException {
         long startTime = System.nanoTime();
         String line = reader.readLine();
-        while(line != null){
+        while (line != null) {
             line = line.replaceAll(" ", "");
             String[] tokens = line.split(",");
-            if(Subscriber.subscribers.containsKey(tokens[1])){
+            if (Subscriber.subscribers.containsKey(tokens[1])) {
                 Subscriber.subscribers.get(tokens[1]).addCall(tokens[0], tokens[2], tokens[3]);
             } else {
                 Subscriber sub = new Subscriber(tokens[1], Tariff.getTariffByCode(tokens[4]));
@@ -30,22 +28,49 @@ public class Generator {
             }
             line = reader.readLine();
         }
+        for (String key : Subscriber.subscribers.keySet()) {
+            Subscriber.subscribers.get(key).countCallsCost();
+        }
         double elapsedTime = (System.nanoTime() - startTime) / 1e6;
         System.out.println(elapsedTime + " ms");
     }
-    private void createReports(){
 
+    public void createReports() {
+        for (String key : Subscriber.subscribers.keySet()) {
+            File file = null;
+            try {
+                String fileName = Subscriber.subscribers.get(key).getNumber() + ".txt";
+                String path = "D:\\JavaProjects\\CallsCDR\\src\\main\\reports\\" + fileName;
+                file = new File(path);
+                if (file.createNewFile()) {
+                    System.out.println("File created!");
+                } else {
+                    System.out.println("File exists!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                assert file != null;
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write(String.valueOf(Subscriber.subscribers.get(key)));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
+
     /**
      * Method to execute generator and create reports.
      *
      * @param fileName the file's path
      */
-    public void execute(String fileName){
-        try (FileReader fr = new FileReader(fileName); BufferedReader reader = new BufferedReader(fr)){
+    public void execute(String fileName) {
+        try (FileReader fr = new FileReader(fileName); BufferedReader reader = new BufferedReader(fr)) {
             parseFile(reader);
-            // createReports();
-        } catch (IOException ioException){
+            createReports();
+        } catch (IOException ioException) {
             ioException.printStackTrace();
         }
     }
